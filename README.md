@@ -42,9 +42,9 @@ $ make install PREFIX=YOURDESIREDLOCATION
 ```bash
 $ echo "exec polygonwm" >> ~/.xinitrc
 ```
-Restart X for the changes to take effect.
-  Note: Polygonwm automatically checks for other WMs in case another WM is already running.
-  Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a daily driver.
+Restart X for the changes to take effect.  
+Note: Polygonwm automatically checks for other WMs in case another WM is already running.  
+Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a daily driver.  
 ## Contributors
 
 <table>
