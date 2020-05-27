@@ -30,7 +30,7 @@
 	-  Unix-like OS
 	-  X11
 
-* How to Install:  
+* How to Install:   
   First, clone this repo and extract the compressed file, and then cd into the extracted directory.
 ```bash
 $ make
@@ -43,8 +43,8 @@ $ make install PREFIX=YOURDESIREDLOCATION
 $ echo "exec polygonwm" >> ~/.xinitrc
 ```
 Restart X for the changes to take effect.
-Note: Polygonwm automatically checks for other WMs in case another WM is already running.
-Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a daily driver.
+  Note: Polygonwm automatically checks for other WMs in case another WM is already running.
+  Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a daily driver.
 ## Contributors
 
 <table>
