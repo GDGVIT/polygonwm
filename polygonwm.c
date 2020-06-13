@@ -187,9 +187,10 @@ static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
 static void fibonacci(Monitor *mon, int s);
 static void spiral(Monitor *mon);
+static void dewdrops(Monitor *mon);
+static void honeycomb(Monitor *mon);
 static void mountain(Monitor *mon);
 static void petal(Monitor *mon);
-static void honeycomb(Monitor *mon);
 static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
@@ -223,9 +224,11 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
-static void roundcorners(Client *c);
+static void setshape(Client *c, int ion);
+static void setmountain(Client *c, int ion);
 
 /* variables */
+static int inv = 0;
 static const char broken[] = "broken";
 static char stext[256];
 static int screen;
@@ -320,6 +323,7 @@ void fibonacci(Monitor *mon, int s) {
 			i++;
 		}
 		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
+		setshape(c,3);
 	}
 }
 
@@ -328,18 +332,94 @@ spiral(Monitor *mon) {
 	fibonacci(mon, 0);
 }
 
-void
-mountain (Monitor *mon) {
-	fibonacci(mon, 0);
-}
+void dewdrops(Monitor *mon) {
+	unsigned int i, n, nx, ny, nw, nh;
+	Client *c;
 
-void
-petal(Monitor *mon) {
-	fibonacci(mon, 0);
+	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0) {
+		return;
+	}
+	nx = mon->wx;
+	ny = 0;
+	nw = mon->ww;
+	nh = mon->wh;
+	
+	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
+		if((!(i % 2) && nh / 2 > 2 * c->bw)
+			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
+			if(i == 1) {
+				if(n == 1) {
+					ny = mon->wy;
+				} else {
+					if(n > 2) {
+						nh = mon->wh*2/4;
+					}
+					nw = mon->ww * mon->mfact;
+				}
+			}
+			if(i == 2) {
+				if (n > i) {
+					nh = mon->wh*2/4;
+				}
+				nw = mon->ww - nw;
+				nx += nw;
+			}
+
+			if(i == 3) {
+				nx = mon->ww/4;
+				ny = mon->wh/2;
+				nh = mon->wh*2/4;
+			}
+		}
+		if(i%2 == 0) {
+			inv = 1;
+		} else {
+			inv = 0;
+		}
+		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
+		setshape(c, inv);
+	}
 }
 
 void
 honeycomb(Monitor *mon) {
+	fibonacci(mon, 0);
+}
+
+void
+mountain(Monitor *mon) {
+	unsigned int i, n, nx, ny, nw, nh;
+	Client *c;
+
+	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0) {
+		return;
+	}
+	nx = mon->wx;
+	ny = 0;
+	nw = (mon->ww/n);
+	nh = mon->wh;
+	
+	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
+		if((!(i % 2) && nh / 2 > 2 * c->bw)
+			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
+			if(i != 1) {
+				nx += nw;
+			}
+		}
+		if(i%2 == 0) {
+			inv = 1;
+		} else {
+			inv = 0;
+		}
+		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
+		setmountain(c, inv);
+	}
+}
+
+void
+petal(Monitor *mon) {
 	fibonacci(mon, 0);
 }
 
@@ -1338,8 +1418,6 @@ resizeclient(Client *c, int x, int y, int w, int h)
 
 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
 	configure(c);
-	roundcorners(c);
-	XSync(dpy, False);
 }
 
 void
@@ -1415,7 +1493,6 @@ restack(Monitor *m)
 		wc.stack_mode = Below;
 		wc.sibling = m->barwin;
 		for (c = m->stack; c; c = c->snext) {
-			roundcorners(c);
 			if (!c->isfloating && ISVISIBLE(c)) {
 				XConfigureWindow(dpy, c->win, CWSibling|CWStackMode, &wc);
 				wc.sibling = c->win;
@@ -2161,32 +2238,34 @@ zoom(const Arg *arg)
 }
 
 void
-roundcorners(Client *c)
+setshape(Client *c, int ion)
 {
     Window w = c->win;
     XWindowAttributes wa;
     XGetWindowAttributes(dpy, w, &wa);
 
     // If this returns null, the window is invalid.
-    if(!XGetWindowAttributes(dpy, w, &wa))
-        return;
+    if(!XGetWindowAttributes(dpy, w, &wa)) {
+		return;
+	}
 
-    int width = borderpx * 2 + wa.width;
-    int height = borderpx * 2 + wa.height;
+    int width = (borderpx * 2) + wa.width;
+    int height = (borderpx * 2) + wa.height;
     /* int width = win_attr.border_width * 2 + win_attr.width; */
     /* int height = win_attr.border_width * 2 + win_attr.height; */
-    int rad = cornerrad * (1-(c->isfullscreen)); //config_theme_cornerradius;
+/*	int rad = cornerrad * (1-(c->isfullscreen)); //config_theme_cornerradius;
     int dia = 2 * rad;
 
     // do not try to round if the window would be smaller than the corners
-    if(width < dia || height < dia)
+    if(width < dia || height < dia) {
         return;
-
-    Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
+	}
+*/
+	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
     // if this returns null, the mask is not drawable
-    if(!mask)
+    if(!mask) {
         return;
-
+	}
     XGCValues xgcv;
     GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
     if(!shape_gc) {
@@ -2194,16 +2273,44 @@ roundcorners(Client *c)
         return;
     }
 
-	XPoint vertices[] = {
-		{0,0},
-		{width,0},
-		{width/2,height}
-	};
     XSetForeground(dpy, shape_gc, 0);
     XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
     XSetForeground(dpy, shape_gc, 1);
-	XFillPolygon(dpy, mask, shape_gc, vertices, (sizeof(vertices)/sizeof(XPoint)), Complex, CoordModeOrigin);
-/*    XFillArc(dpy, mask, shape_gc, 0, 0, dia, dia, 0, 23040);
+
+		XPoint verticesR[] = {
+			{0,0},
+			{width,0},
+			{width,height},
+			{0,height}
+		};
+		XPoint verticesT[] = {
+			{0,0},
+			{width,0},
+			{width/2,height}
+		};
+		XPoint verticesInvT[] = {
+			{width/2,0},
+			{width,height},
+			{0,height}
+		};
+		XPoint verticesHC[] = {
+			{width/2,0},
+			{0,height/4},
+			{0,height*3/4},
+			{width/2,height},
+			{width,height*3/4},
+			{width,height/4}
+		};
+//	if (((strcmp(selmon->lt[selmon->sellt]->symbol,"o o")) != 0) && (ion == 0)) {
+	if ((ion == 0)) {
+		XFillPolygon(dpy, mask, shape_gc, verticesT, (sizeof(verticesT)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	}
+	else if(ion == 1) { 
+		XFillPolygon(dpy, mask, shape_gc, verticesInvT, (sizeof(verticesInvT)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	} else {
+		XFillPolygon(dpy, mask, shape_gc, verticesR, (sizeof(verticesR)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	}
+/*  XFillArc(dpy, mask, shape_gc, 0, 0, dia, dia, 0, 23040);
     XFillArc(dpy, mask, shape_gc, width-dia-1, 0, dia, dia, 0, 23040);
     XFillArc(dpy, mask, shape_gc, 0, height-dia-1, dia, dia, 0, 23040);
     XFillArc(dpy, mask, shape_gc, width-dia-1, height-dia-1, dia, dia, 0, 23040);
@@ -2215,6 +2322,58 @@ roundcorners(Client *c)
 	/*And ends here.*/
     XFreePixmap(dpy, mask);
     XFreeGC(dpy, shape_gc);
+	XSync(dpy, False);
+}
+
+void
+setmountain(Client *c, int ion)
+{
+    Window w = c->win;
+    XWindowAttributes wa;
+    XGetWindowAttributes(dpy, w, &wa);
+
+    if(!XGetWindowAttributes(dpy, w, &wa)) {
+		return;
+	}
+
+    int width = (borderpx * 2) + wa.width;
+    int height = (borderpx * 2) + wa.height;
+
+	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
+    if(!mask) {
+        return;
+	}
+    XGCValues xgcv;
+    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
+    if(!shape_gc) {
+        XFreePixmap(dpy, mask);
+        return;
+    }
+
+    XSetForeground(dpy, shape_gc, 0);
+    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
+    XSetForeground(dpy, shape_gc, 1);
+
+		XPoint verticesT[] = {
+			{0,0},
+			{width,0},
+			{width/2,height}
+		};
+		XPoint verticesInvT[] = {
+			{width/2,0},
+			{width,height},
+			{0,height}
+		};
+	if ((ion == 0)) {
+		XFillPolygon(dpy, mask, shape_gc, verticesT, (sizeof(verticesT)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	}
+	else { 
+		XFillPolygon(dpy, mask, shape_gc, verticesInvT, (sizeof(verticesInvT)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	}
+	XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
+    XFreePixmap(dpy, mask);
+    XFreeGC(dpy, shape_gc);
+	XSync(dpy, False);
 }
 
 int

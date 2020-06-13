@@ -16,7 +16,7 @@
 - [X]  Multiple Workspaces
 - [X]  Bar toggle
 - [X]  Window Tagging
-- [ ]  Mountain Layout
+- [X]  Mountain Layout
 - [ ]  Petal Layout
 - [ ]  Honeycomb Layout
 - [ ]  Ripple Layout
