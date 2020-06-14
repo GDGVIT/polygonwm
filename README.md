@@ -2,6 +2,7 @@
 <a href="https://dscvit.com">
 	<img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" />
 </a>
+<<<<<<< HEAD
 	<h2 align="center">  PolygonWM  </h2>
 	<h4 align="center">  An Experimental window manager made purely for aesthetic pursposes.  <h4>
 </p>
@@ -27,6 +28,7 @@
 ## Instructions to run
 
 * Pre-requisites:
+<<<<<<< HEAD
 	-  Unix-like OS
 	-  X11
 
@@ -49,7 +51,6 @@ Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a
 
 <table>
 <tr align="center">
-
 
 <td>
 
