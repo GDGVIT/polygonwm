@@ -43,9 +43,9 @@ static const Layout layouts[] = {
 	/* symbol       arrange function */
 	{ "",           spiral },    /* first entry is default */
 	{ "><>",        NULL },
-	{ "<->",        honeycomb }, /* be sure to reflect chages in dwm.c in case of modifications */
+	{ "<_>",        honeycomb }, /* be sure to reflect chages in dwm.c in case of modifications */
 	{ "o o",        dewdrops },
-	{ "_|^|_",      mountain },
+	{ "/\\",        mountain },
 	{ "<^>",        petal }
 	/* no layout function means floating behavior */
 };
@@ -87,7 +87,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_i,                     incnmaster,     {.i = +1 } },
 	{ MODKEY,                       XK_n,                  	  spawn,	      {.v = nnnSpawn } },
 	{ MODKEY|ShiftMask,             XK_n,                  	  spawn,	      {.v = sudonnnSpawn } },
-	{ MODKEY,                       XK_d,                     incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_d,                     incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_j,                     setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_k,                     setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_Return,                zoom,           {0} },
@@ -96,7 +96,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_t,                     setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,                     setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_h,                     setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_v,                     setlayout,      {.v = &layouts[3]} },
+	{ MODKEY,                       XK_d,                     setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_m,                     setlayout,      {.v = &layouts[4]} },
 	{ MODKEY,                       XK_space,                 setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
