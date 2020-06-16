@@ -188,7 +188,7 @@ static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
 static void fibonacci(Monitor *mon, int s);
 static void spiral(Monitor *mon);
-static void dewdrops(Monitor *mon);
+static void ripple(Monitor *mon);
 static void honeycomb(Monitor *mon);
 static void mountain(Monitor *mon);
 static void petal(Monitor *mon);
@@ -228,7 +228,7 @@ static void zoom(const Arg *arg);
 static void setfibo(Client *c);
 static void setmountain(Client *c, int ion);
 static void setcomb(Client *c);
-static void setdrops(Client *c);
+static void setripple(Client *c);
 
 /* variables */
 static int inv = 0;
@@ -384,7 +384,7 @@ honeycomb(Monitor *mon) {
 	}
 }
 
-void dewdrops(Monitor *mon) {
+void ripple(Monitor *mon) {
 	honeycomb(mon);
 }
 
@@ -1424,8 +1424,8 @@ resizeclient(Client *c, int x, int y, int w, int h)
 		setfibo(c);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"/\\")) == 0)) {
 		setmountain(c,inv);
-	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"o o")) == 0)) {
-		setdrops(c);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"(o)")) == 0)) {
+		setripple(c);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"<_>")) == 0)) {
 		setcomb(c);
 	} else {
@@ -2407,7 +2407,7 @@ setcomb(Client *c)
 
 
 void
-setdrops(Client *c)
+setripple(Client *c)
 {
     Window w = c->win;
     XWindowAttributes wa;
