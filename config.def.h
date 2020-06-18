@@ -1,8 +1,9 @@
 /* See LICENSE file for copyright and license details. */
 #include <X11/XF86keysym.h>
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
-static const unsigned int snap      = 7;       /* snap pixel */
+static const unsigned int borderpx  = 0;        /* border pixel of windows */
+static const unsigned int snap      = 7;        /* snap pixel */
+static const unsigned int gappx     = 4;        /* gap pixel */
 static const int showbar            = 0;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "DejaVu Sans Mono:size=9" };
@@ -56,13 +57,11 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *dmenucmd[] = { "dmenu_run",  NULL }; /* dmenu is an application launcher made by the suckless community */
-static const char *termcmd[]  = { "st", NULL }; /* use your own terminal by changing the name.  */
+static const char *dmenucmd[] = { "dmenu_run",  NULL }; /* dmenu is an application launcher */
 
 static Key keys[] = {
 	/* modifier                     key                       function        argument */
 	{ MODKEY,                       XK_p,                     spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return,                spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,                     togglebar,      {0} },
 	{ MODKEY,                       XK_Right,                 focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_Left,                  focusstack,     {.i = -1 } },
@@ -87,7 +86,6 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period,                focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,                tagmon,         {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_BackSpace,      		  quit,           {0} },
 	TAGKEYS(                        XK_1,                     			   	  0)			  
 	TAGKEYS(                        XK_2,						  		   	  1)
 	TAGKEYS(                        XK_3,                      				  2)
@@ -97,6 +95,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,           	          			  6)
 	TAGKEYS(                        XK_8,		              	        	  7)
 	TAGKEYS(                        XK_9,       			        	      8)
+	{ MODKEY|ShiftMask,             XK_BackSpace,      		   quit,          {0} }
 };
 
 /* button definitions */
@@ -106,7 +105,6 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
