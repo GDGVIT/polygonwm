@@ -3,7 +3,7 @@
 	<img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" />
 </a>
 	<h2 align="center">  PolygonWM  </h2>
-	<h4 align="center">  An Experimental window manager made purely for aesthetic pursposes.  <h4>
+	<h4 align="center">  An experimental window manager made purely for aesthetic pursposes.  <h4>
 </p>
 
 ---
@@ -16,10 +16,11 @@
 - [X]  Multiple Workspaces
 - [X]  Bar toggle
 - [X]  Window Tagging
-- [ ]  Mountain Layout
-- [ ]  Petal Layout
-- [ ]  Honeycomb Layout
+- [X]  Gaps
+- [X]  Honeycomb Layout
+- [X]  Mountain Layout
 - [ ]  Ripple Layout
+- [ ]  Petal Layout
 
 <br>
 
@@ -49,7 +50,6 @@ Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a
 
 <table>
 <tr align="center">
-
 
 <td>
 

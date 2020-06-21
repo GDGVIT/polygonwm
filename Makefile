@@ -3,7 +3,7 @@
 
 include config.mk
 
-SRC = drw.c pwm.c util.c
+SRC = drw.c polygonwm.c util.c
 OBJ = ${SRC:.c=.o}
 
 all: options polygonwm
