@@ -3,7 +3,7 @@
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 7;        /* snap pixel */
-static const unsigned int gappx     = 4;        /* gap pixel */
+static const unsigned int gappx     = 5;        /* gap pixel */
 static const int showbar            = 0;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "DejaVu Sans Mono:size=9" };
@@ -42,6 +42,8 @@ static const Layout layouts[] = {
 	{ "<_>",        honeycomb }, /* be sure to reflect chages in dwm.c in case of modifications */
 	{ "(o)",        ripple },
 	{ "/\\",        mountain },
+	{ "/_\\",       nonagon },
+	{ "<->",        pentagon },
 	{ "<^>",        petal }
 	/* no layout function means floating behavior */
 };
@@ -77,6 +79,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_h,                     setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_r,                     setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_m,                     setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                       XK_d,                     setlayout,      {.v = &layouts[5]} },
+	{ MODKEY|ShiftMask,             XK_p,                     setlayout,      {.v = &layouts[6]} },
 	{ MODKEY,                       XK_space,                 setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
 	{ MODKEY|ShiftMask,             XK_f,      				  togglefullscr,  {0} },
