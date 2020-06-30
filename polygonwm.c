@@ -191,6 +191,8 @@ static void spiral(Monitor *mon);
 static void ripple(Monitor *mon);
 static void honeycomb(Monitor *mon);
 static void mountain(Monitor *mon);
+static void nonagon(Monitor *mon);
+static void pentagon(Monitor *mon);
 static void petal(Monitor *mon);
 static void setmfact(const Arg *arg);
 static void setup(void);
@@ -226,8 +228,10 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static void setfibo(Client *c);
-static void setmountain(Client *c, int ion);
 static void setcomb(Client *c);
+static void setmountain(Client *c, int ion);
+static void setnonagon(Client *c);
+static void setpentagon(Client *c);
 static void setripple(Client *c);
 
 /* variables */
@@ -358,7 +362,7 @@ honeycomb(Monitor *mon) {
 					nw = (mon->ww - (2*gappx) - (gappx))/2;
 				}
 				if(n > 2) {
-					nh = (mon->wh - (2*gappx))/nor;
+					nh = (mon->wh - (4*gappx))/nor;
 				}
 			}
 			if(i == 2) {
@@ -367,13 +371,13 @@ honeycomb(Monitor *mon) {
 
 			if(i > 2) {
 				if(i%2 == 1) {
-					if(i == n) {
+				if(i == n) {
 						nx = (mon->ww + gappx)/4;
 					}
 					else {
 						nx = (mon->wx + gappx);
 					}
-					ny += nh;
+					ny += nh + (gappx);
 				} else {
 					nx = (mon->ww + gappx)/2;
 				}
@@ -385,7 +389,51 @@ honeycomb(Monitor *mon) {
 }
 
 void ripple(Monitor *mon) {
-	honeycomb(mon);
+	unsigned int i, n, nx, ny, nw, nh;
+	Client *c;
+
+	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0) {
+		return;
+	}
+	nx = mon->wx + gappx;
+	ny = mon->wy + gappx;
+	nw = mon->ww - (2 * gappx);
+	nh = mon->wh - (2 * gappx);
+	float df = (float)n/2;
+	int nor = (ceil(df)); /* no of rows of windows  */ 
+	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
+		if((!(i % 2) && nh / 2 > 2 * c->bw)
+			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
+			if(i == 1) {
+				if(n > 1) {
+					nw = (mon->ww - (2*gappx) - (gappx))/2;
+				}
+				if(n > 2) {
+					nh = (mon->wh - (4*gappx))/nor;
+				}
+			}
+			if(i == 2) {
+				nx += nw + gappx;
+			}
+
+			if(i > 2) {
+				if(i%2 == 1) {
+				if(i == n) {
+						nx = (mon->ww + gappx)/4;
+					}
+					else {
+						nx = (mon->wx + gappx);
+					}
+					ny += nh + (gappx);
+				} else {
+					nx = (mon->ww + gappx)/2;
+				}
+			}
+		}
+		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
+		setripple(c);
+	}
 }
 
 void
@@ -416,6 +464,102 @@ mountain(Monitor *mon) {
 		}
 		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
 		setmountain(c, inv);
+	}
+}
+
+void nonagon(Monitor *mon) {
+	unsigned int i, n, nx, ny, nw, nh;
+	Client *c;
+
+	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0) {
+		return;
+	}
+	nx = mon->wx + gappx;
+	ny = mon->wy + gappx;
+	nw = mon->ww - (2 * gappx);
+	nh = mon->wh - (2 * gappx);
+	float df = (float)n/2;
+	int nor = (ceil(df)); /* no of rows of windows  */ 
+	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
+		if((!(i % 2) && nh / 2 > 2 * c->bw)
+			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
+			if(i == 1) {
+				if(n > 1) {
+					nw = (mon->ww - (2*gappx) - (gappx))/2;
+				}
+				if(n > 2) {
+					nh = (mon->wh - (2*gappx) - gappx)/nor;
+				}
+			}
+			if(i == 2) {
+				nx += nw + gappx;
+			}
+
+			if(i > 2) {
+				if(i%2 == 1) {
+					if(i == n) {
+						nx = (mon->ww + gappx)/4;
+					}
+					else {
+						nx = (mon->wx + gappx);
+					}
+					ny += nh + gappx;
+				} else {
+					nx = (mon->ww + gappx)/2;
+				}
+			}
+		}
+		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
+		setnonagon(c);
+	}
+}
+
+void pentagon(Monitor *mon) {
+	unsigned int i, n, nx, ny, nw, nh;
+	Client *c;
+
+	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0) {
+		return;
+	}
+	nx = mon->wx + gappx;
+	ny = mon->wy + gappx;
+	nw = mon->ww - (2 * gappx);
+	nh = mon->wh - (2 * gappx);
+	float df = (float)n/2;
+	int nor = (ceil(df)); /* no of rows of windows  */ 
+	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
+		if((!(i % 2) && nh / 2 > 2 * c->bw)
+			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
+			if(i == 1) {
+				if(n > 1) {
+					nw = (mon->ww - (2*gappx) - (gappx))/2;
+				}
+				if(n > 2) {
+					nh = (mon->wh - (2*gappx) - gappx)/nor;
+				}
+			}
+			if(i == 2) {
+				nx += nw + gappx;
+			}
+
+			if(i > 2) {
+				if(i%2 == 1) {
+					if(i == n) {
+						nx = (mon->ww + gappx)/4;
+					}
+					else {
+						nx = (mon->wx + gappx);
+					}
+					ny += nh + gappx;
+				} else {
+					nx = (mon->ww + gappx)/2;
+				}
+			}
+		}
+		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
+		setpentagon(c);
 	}
 }
 
@@ -1428,6 +1572,10 @@ resizeclient(Client *c, int x, int y, int w, int h)
 		setripple(c);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"<_>")) == 0)) {
 		setcomb(c);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"/_\\")) == 0)) {
+		setnonagon(c);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"<->")) == 0)) {
+		setpentagon(c);
 	} else {
 		return;
 	}
@@ -2378,16 +2526,7 @@ setcomb(Client *c)
     XSetForeground(dpy, shape_gc, 0);
     XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
     XSetForeground(dpy, shape_gc, 1);
-/*	
-	XPoint verticesHC[] = {
-		{width/4,0},
-		{width*3/4,0},
-		{width,height/2},
-		{width*3/4,height},
-		{width/4,height},
-		{0,height/2}
-	};
-*/
+
 	XPoint verticesHC[] = {
 		{width/2,0},
 		{0,height/4},
@@ -2436,16 +2575,104 @@ setripple(Client *c)
     XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
     XSetForeground(dpy, shape_gc, 1);
 	
-	XPoint verticesHC[] = {
-		{width/2,0},
-		{0,height/4},
-		{0,height*3/4},
-		{width/2,height},
-		{width,height*3/4},
-		{width,height/4}
-	};
 	
-	XFillPolygon(dpy, mask, shape_gc, verticesHC, (sizeof(verticesHC)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	XFillArc(dpy, mask, shape_gc, 0, 0, width, height, 64, 23040);
+
+    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
+
+    XFreePixmap(dpy, mask);
+    XFreeGC(dpy, shape_gc);
+	XSync(dpy, False);
+}
+
+void
+setnonagon(Client *c)
+{
+    Window w = c->win;
+    XWindowAttributes wa;
+    XGetWindowAttributes(dpy, w, &wa);
+
+    if(!XGetWindowAttributes(dpy, w, &wa)) {
+		return;
+	}
+
+    int width = (borderpx * 2) + wa.width;
+    int height = (borderpx * 2) + wa.height;
+
+	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
+
+    if(!mask) {
+        return;
+	}
+    XGCValues xgcv;
+    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
+    if(!shape_gc) {
+        XFreePixmap(dpy, mask);
+        return;
+    }
+
+    XSetForeground(dpy, shape_gc, 0);
+    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
+    XSetForeground(dpy, shape_gc, 1);
+
+	XPoint verticesNG[] = {
+		{width/4,0},
+		{width*3/4,0},
+		{width,height/4},
+		{width,height/2},
+		{width*9/10,height*3/4},
+		{width/2,height},
+		{width/10,height*3/4},
+		{0,height/2},
+		{0,height/4}
+	};
+	XFillPolygon(dpy, mask, shape_gc, verticesNG, (sizeof(verticesNG)/sizeof(XPoint)), Complex, CoordModeOrigin);
+
+    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
+
+    XFreePixmap(dpy, mask);
+    XFreeGC(dpy, shape_gc);
+	XSync(dpy, False);
+}
+
+void
+setpentagon(Client *c)
+{
+    Window w = c->win;
+    XWindowAttributes wa;
+    XGetWindowAttributes(dpy, w, &wa);
+
+    if(!XGetWindowAttributes(dpy, w, &wa)) {
+		return;
+	}
+
+    int width = (borderpx * 2) + wa.width;
+    int height = (borderpx * 2) + wa.height;
+
+	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
+
+    if(!mask) {
+        return;
+	}
+    XGCValues xgcv;
+    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
+    if(!shape_gc) {
+        XFreePixmap(dpy, mask);
+        return;
+    }
+
+    XSetForeground(dpy, shape_gc, 0);
+    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
+    XSetForeground(dpy, shape_gc, 1);
+
+	XPoint verticesPG[] = {
+		{width/4,0},
+		{width*3/4,0},
+		{width,height/4},
+		{width/2,height},
+		{0,height/4}
+	};
+	XFillPolygon(dpy, mask, shape_gc, verticesPG, (sizeof(verticesPG)/sizeof(XPoint)), Complex, CoordModeOrigin);
 
     XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
 
