@@ -18,8 +18,10 @@
 - [X]  Window Tagging
 - [X]  Gaps
 - [X]  Honeycomb Layout
+- [X]  Nonagon Layout
+- [X]  Pentagon Layout
 - [X]  Mountain Layout
-- [ ]  Ripple Layout
+- [X]  Ripple Layout
 - [ ]  Petal Layout
 
 <br>
