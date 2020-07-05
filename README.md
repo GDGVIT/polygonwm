@@ -12,10 +12,17 @@
   [![UI ](https://img.shields.io/badge/User%20Interface-Link%20to%20UI-orange?style=flat-square&logo=appveyor)](INSERT_UI_LINK_HERE)
 -->
 
+## What is it, and why?  
+
+PolygonWM is the answer for the question "Can windows be non-rectangular?". It is forked from DWM version 6.2, and tries to adhere to the suckless philosophy. It isn't meant to be better than any other WMs and doesn't claim to be. It's meant to break conventions; to be different. PolygonWM contains the following additional DWM patches which might have not be in it's original form:  
+- [fullscreen](https://dwm.suckless.org/patches/fullscreen/)
+- [cyclelayouts](https://dwm.suckless.org/patches/cyclelayouts/)
+- [gaps](https://dwm.suckless.org/patches/gaps/)
+- [centeredmaster](https://dwm.suckless.org/patches/centeredmaster/)
+- [fibonacci](https://dwm.suckless.org/patches/fibonacci/)
+
 ## Functionalities
-- [X]  Multiple Workspaces
-- [X]  Bar toggle
-- [X]  Window Tagging
+- [X]  All features of DWM(Multiple Workspaces, Bar, Window Tagging).
 - [X]  Gaps
 - [X]  Honeycomb Layout
 - [X]  Dewdrop Layout
@@ -50,6 +57,11 @@ $ echo "exec polygonwm" >> ~/.xinitrc
 Restart X for the changes to take effect.  
 Note: Polygonwm automatically checks for other WMs in case another WM is already running.  
 Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a daily driver.  
+
+## Usage  
+
+All settings/configurations and customizations are done throught the config..def.h file. After every change, the source has to be recompiled. The default keybindings can be viewed/modified from the config.def.h file, including those for the different layouts.
+
 ## Contributors
 
 <table>
