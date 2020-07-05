@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 #include <X11/XF86keysym.h>
 /* appearance */
-static const unsigned int borderpx  = 0;        /* border pixel of windows */
+static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 7;        /* snap pixel */
 static const unsigned int gappx     = 5;        /* gap pixel */
 static const int showbar            = 0;        /* 0 means no bar */
@@ -10,7 +10,7 @@ static const char *fonts[]          = { "DejaVu Sans Mono:size=9" };
 static const char col_yorange[]     = "#ffe27a";
 static const char col_orange[]      = "#ff4500";
 static const char col_gray[]        = "#223322";
-static const char col_white[]        = "#ffffff";
+static const char col_white[]       = "#ffffff";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
@@ -36,15 +36,18 @@ static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
-	/* symbol       arrange function */
-	{ "",           spiral },    /* first entry is default */
-	{ "><>",        NULL },
-	{ "<_>",        honeycomb }, /* be sure to reflect chages in dwm.c in case of modifications */
-	{ "(o)",        ripple },
-	{ "/\\",        mountain },
-	{ "/_\\",       nonagon },
-	{ "<->",        pentagon },
-	{ "<^>",        petal }
+	/* symbol     arrange function */
+	{ "",         spiral },    /* first entry is default */
+	{ "><>",      NULL },
+	{ "H",        honeycomb }, /* be sure to reflect chages in dwm.c in case of modifications */
+	{ "D",        dewdrop },
+	{ "M",        mountain },
+	{ "N",        nonagon },
+	{ "R",        roundbrilliant },
+	{ "O",        planet },
+	{ "B",        butterfly },
+	{ "E",        emerald },
+	{ NULL,       NULL },
 	/* no layout function means floating behavior */
 };
 
@@ -68,28 +71,33 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Right,                 focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_Left,                  focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,                     incnmaster,     {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_d,                     incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_d,                     incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_j,                     setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_k,                     setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_Return,                zoom,           {0} },
 	{ MODKEY,                       XK_Tab,                   view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,                     killclient,     {0} },
-	{ MODKEY,                       XK_t,                     setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,                     setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_h,                     setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_r,                     setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_m,                     setlayout,      {.v = &layouts[4]} },
-	{ MODKEY,                       XK_d,                     setlayout,      {.v = &layouts[5]} },
-	{ MODKEY|ShiftMask,             XK_p,                     setlayout,      {.v = &layouts[6]} },
+	{ MODKEY|ShiftMask,             XK_s,                     setlayout,      {.v = &layouts[0]} },
+	{ MODKEY|ShiftMask,             XK_f,                     setlayout,      {.v = &layouts[1]} },
+	{ MODKEY|ShiftMask,             XK_h,                     setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|ShiftMask,             XK_d,                     setlayout,      {.v = &layouts[3]} },
+	{ MODKEY|ShiftMask,             XK_m,                     setlayout,      {.v = &layouts[4]} },
+	{ MODKEY|ShiftMask,             XK_n,                     setlayout,      {.v = &layouts[5]} },
+	{ MODKEY|ShiftMask,             XK_r,                     setlayout,      {.v = &layouts[6]} },
+	{ MODKEY|ShiftMask,             XK_p,                     setlayout,      {.v = &layouts[7]} },
+	{ MODKEY|ShiftMask,             XK_b,                     setlayout,      {.v = &layouts[8]} },
+	{ MODKEY|ShiftMask,             XK_e,                     setlayout,      {.v = &layouts[9]} },
 	{ MODKEY,                       XK_space,                 setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
-	{ MODKEY|ShiftMask,             XK_f,      				  togglefullscr,  {0} },
+	{ MODKEY,                       XK_f,      				  togglefullscr,  {0} },
 	{ MODKEY,                       XK_0,                     view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,                     tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,                 focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period,                focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period,                tagmon,         {.i = +1 } },
+	{ MODKEY|ControlMask,           XK_comma,                 cyclelayout,    {.i = -1 } },
+	{ MODKEY|ControlMask,           XK_period,                cyclelayout,    {.i = +1 } },
 	TAGKEYS(                        XK_1,                     			   	  0)			  
 	TAGKEYS(                        XK_2,						  		   	  1)
 	TAGKEYS(                        XK_3,                      				  2)
