@@ -229,14 +229,7 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
-static void setspiral(Client *c);
-static void setcomb(Client *c);
-static void setmountain(Client *c);
-static void setemerald(Client *c);
-static void setnonagon(Client *c);
-static void setroundbrilliant(Client *c);
-static void setbutterfly(Client *c);
-static void setcircle(Client *c);
+static void setshape(Client *c, short ln);
 
 /* variables */
 static int ion = 0;
@@ -331,7 +324,7 @@ spiral(Monitor *mon) {
 			i++;
 		}
 		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
-		setspiral(c);
+		setshape(c,0);  // Spiral layout
 	}
 }
 
@@ -380,7 +373,7 @@ honeycomb(Monitor *mon) {
 			}
 		}
 		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
-		setcomb(c);
+		setshape(c,2);  // Honeycomb layout
 	}
 }
 
@@ -409,7 +402,7 @@ void dewdrop(Monitor *mon) {
 			}
 		}
 		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
-		setcircle(c);
+		setshape(c,3);  // Dewdrop layout
 	}
 }
 
@@ -440,55 +433,8 @@ mountain(Monitor *mon) {
 			ion = 0;
 		}
 		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
-		setmountain(c);
-	}
-}
+		setshape(c,4);  // Dewdrop layout
 
-void emerald(Monitor *mon) {
-	unsigned int i, n, nx, ny, nw, nh;
-	Client *c;
-
-	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
-	if(n == 0) {
-		return;
-	}
-	nx = mon->wx + gappx;
-	ny = mon->wy + gappx;
-	nw = mon->ww - (2 * gappx);
-	nh = mon->wh - (2 * gappx);
-	float df = (float)n/2;
-	int nor = (ceil(df)); /* no of rows of windows  */ 
-	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
-		if((!(i % 2) && nh / 2 > 2 * c->bw)
-			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
-			if(i == 1) {
-				if(n > 1) {
-					nw = (mon->ww - (2*gappx) - (gappx))/2;
-				}
-				if(n > 2) {
-					nh = (mon->wh - (2*gappx) - gappx)/nor;
-				}
-			}
-			if(i == 2) {
-				nx += nw + gappx;
-			}
-
-			if(i > 2) {
-				if(i%2 == 1) {
-					if(i == n) {
-						nx = (mon->ww + gappx)/4;
-					}
-					else {
-						nx = (mon->wx + gappx);
-					}
-					ny += nh + gappx;
-				} else {
-					nx = (mon->ww + gappx)/2;
-				}
-			}
-		}
-		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
-		setemerald(c);
 	}
 }
 
@@ -536,7 +482,7 @@ void nonagon(Monitor *mon) {
 			}
 		}
 		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
-		setnonagon(c);
+		setshape(c,5);  // Nonagon layout
 	}
 }
 
@@ -584,7 +530,7 @@ void roundbrilliant(Monitor *mon) {
 			}
 		}
 		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
-		setroundbrilliant(c);
+		setshape(c,6);  // Round Brilliant layout
 	}
 }
 
@@ -627,7 +573,6 @@ planet(Monitor *m)
 			resize(c, m->wx + mx, m->wy + my, mw - (2*c->bw),
 			       h - (2*c->bw), 0);
 			my += HEIGHT(c);
-			setcircle(c);
 		} else {
 			/* stack clients are stacked vertically */
 			if ((i - m->nmaster) % 2 ) {
@@ -635,15 +580,14 @@ planet(Monitor *m)
 				resize(c, m->wx, m->wy + ety, tw - (2*c->bw),
 				h - (2*c->bw), 0);
 				ety += HEIGHT(c);
-				setcircle(c);
 			} else {
 				h = (m->wh - oty) / ((1 + n - i) / 2);
 				resize(c, m->wx + mx + mw, m->wy + oty,
 				tw - (2*c->bw), h - (2*c->bw), 0);
 				oty += HEIGHT(c);
-				setcircle(c);
 			}
 		}
+		setshape(c,7);  // Planet layout
 	}
 }
 
@@ -686,15 +630,62 @@ butterfly(Monitor *m)
 			resize(c, m->wx + mx, m->wy + my, w - (2*c->bw),
 			       mh - (2*c->bw), 0);
 			mx += WIDTH(c);
-			setbutterfly(c);
 		} else {
 			/* stack clients are stacked horizontally */
 			w = (m->ww - tx) / (n - i);
 			resize(c, m->wx + tx, m->wy, w - (2*c->bw),
 			       m->wh - (2*c->bw), 0);
 			tx += WIDTH(c);
-			setbutterfly(c);
 		}
+		setshape(c,8);  // Butterfly layout
+	}
+}
+
+void emerald(Monitor *mon) {
+	unsigned int i, n, nx, ny, nw, nh;
+	Client *c;
+
+	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0) {
+		return;
+	}
+	nx = mon->wx + gappx;
+	ny = mon->wy + gappx;
+	nw = mon->ww - (2 * gappx);
+	nh = mon->wh - (2 * gappx);
+	float df = (float)n/2;
+	int nor = (ceil(df)); /* no of rows of windows  */ 
+	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
+		if((!(i % 2) && nh / 2 > 2 * c->bw)
+			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
+			if(i == 1) {
+				if(n > 1) {
+					nw = (mon->ww - (2*gappx) - (gappx))/2;
+				}
+				if(n > 2) {
+					nh = (mon->wh - (2*gappx) - gappx)/nor;
+				}
+			}
+			if(i == 2) {
+				nx += nw + gappx;
+			}
+
+			if(i > 2) {
+				if(i%2 == 1) {
+					if(i == n) {
+						nx = (mon->ww + gappx)/4;
+					}
+					else {
+						nx = (mon->wx + gappx);
+					}
+					ny += nh + gappx;
+				} else {
+					nx = (mon->ww + gappx)/2;
+				}
+			}
+		}
+		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
+		setshape(c,9);  // Emerald layout
 	}
 }
 
@@ -1712,23 +1703,23 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	configure(c);
 
 	if (((strcmp(selmon->lt[selmon->sellt]->symbol,"")) == 0)) {
-		setspiral(c);
-	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"M")) == 0)) {
-		setmountain(c);
-	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"O")) == 0)) {
-		setcircle(c);
-	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"D")) == 0)) {
-		setcircle(c);
+		setshape(c,0);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"H")) == 0)) {
-		setcomb(c);
-	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"E")) == 0)) {
-		setemerald(c);
+		setshape(c,2);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"D")) == 0)) {
+		setshape(c,3);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"M")) == 0)) {
+		setshape(c,4);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"N")) == 0)) {
-		setnonagon(c);
+		setshape(c,5);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"R")) == 0)) {
-		setroundbrilliant(c);
-	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"L")) == 0)) {
-		setbutterfly(c);
+		setshape(c,6);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"O")) == 0)) {
+		setshape(c,7);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"B")) == 0)) {
+		setshape(c,8);
+	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"E")) == 0)) {
+		setshape(c,9);
 	} else {
 		return;
 	}
@@ -1930,7 +1921,7 @@ setfullscreen(Client *c, int fullscreen)
 		c->isfloating = 1;
 		resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
 		/* modified here*/
-		setspiral(c);
+		setshape(c,0);
 		XRaiseWindow(dpy, c->win);
 	} else if (!fullscreen && c->isfullscreen){
 		XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
@@ -2553,8 +2544,9 @@ zoom(const Arg *arg)
 	pop(c);
 }
 
+
 void
-setspiral(Client *c)
+setshape(Client *c, short ln)
 {
     Window w = c->win;
     XWindowAttributes wa;
@@ -2582,51 +2574,36 @@ setspiral(Client *c)
     XSetForeground(dpy, shape_gc, 0);
     XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
     XSetForeground(dpy, shape_gc, 1);
+
+	if(ln == 0) {
+		XPoint verticesR[] = {
+			{0,0},
+			{width,0},
+			{width,height},
+			{0,height}
+		};
 	
-	XPoint verticesR[] = {
-		{0,0},
-		{width,0},
-		{width,height},
-		{0,height}
-	};
-	
-	XFillPolygon(dpy, mask, shape_gc, verticesR, (sizeof(verticesR)/sizeof(XPoint)), Complex, CoordModeOrigin);
+		XFillPolygon(dpy, mask, shape_gc, verticesR, (sizeof(verticesR)/sizeof(XPoint)), Complex, CoordModeOrigin);
+	} else if(ln == 1) {
 
-    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
+	} else if(ln == 2) {
+		
+		XPoint verticesHC[] = {
+			{width/2,0},
+			{0,height/4},
+			{0,height*3/4},
+			{width/2,height},
+			{width,height*3/4},
+			{width,height/4}
+		};
 
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
+		XFillPolygon(dpy, mask, shape_gc, verticesHC, (sizeof(verticesHC)/sizeof(XPoint)), Complex, CoordModeOrigin);
 
-void
-setmountain(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
+	} else if(ln == 3) {
+		
+		XFillArc(dpy, mask, shape_gc, 0, 0, width, height, 0, 23040);
 
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
-	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
+	} else if(ln == 4) {		
 
 		XPoint verticesT[] = {
 			{0,0},
@@ -2638,291 +2615,72 @@ setmountain(Client *c)
 			{width,height},
 			{0,height}
 		};
-	if ((ion == 0)) {
-		XFillPolygon(dpy, mask, shape_gc, verticesT, (sizeof(verticesT)/sizeof(XPoint)), Complex, CoordModeOrigin);
-	}
-	else { 
-		XFillPolygon(dpy, mask, shape_gc, verticesInvT, (sizeof(verticesInvT)/sizeof(XPoint)), Complex, CoordModeOrigin);
-	}
-	XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
 
-void
-setcomb(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
-
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
-	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
-
-	XPoint verticesHC[] = {
-		{width/2,0},
-		{0,height/4},
-		{0,height*3/4},
-		{width/2,height},
-		{width,height*3/4},
-		{width,height/4}
-	};
-	XFillPolygon(dpy, mask, shape_gc, verticesHC, (sizeof(verticesHC)/sizeof(XPoint)), Complex, CoordModeOrigin);
-
-    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
-
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
-
-
-void
-setcircle(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
-
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
-	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
+		if ((ion == 0)) {
+			XFillPolygon(dpy, mask, shape_gc, verticesT, (sizeof(verticesT)/sizeof(XPoint)), Complex, CoordModeOrigin);
+		}
+		else { 
+			XFillPolygon(dpy, mask, shape_gc, verticesInvT, (sizeof(verticesInvT)/sizeof(XPoint)), Complex, CoordModeOrigin);
+		}
 	
+	} else if(ln == 5) {
+
+		XPoint verticesNG[] = {
+			{width/4,0},
+			{width*3/4,0},
+			{width,height/4},
+			{width,height/2},
+			{width*9/10,height*3/4},
+			{width/2,height},
+			{width/10,height*3/4},
+			{0,height/2},
+			{0,height/4}
+		};
+		XFillPolygon(dpy, mask, shape_gc, verticesNG, (sizeof(verticesNG)/sizeof(XPoint)), Complex, CoordModeOrigin);
+
+	} else if(ln == 6) {
+
+		XPoint verticesRB[] = {
+			{width/4,0},
+			{width*3/4,0},
+			{width,height/4},
+			{width/2,height},
+			{0,height/4}
+		};
+		XFillPolygon(dpy, mask, shape_gc, verticesRB, (sizeof(verticesRB)/sizeof(XPoint)), Complex, CoordModeOrigin);
+
+	} else if(ln == 7) {
 	
-	XFillArc(dpy, mask, shape_gc, 0, 0, width, height, 0, 23040);
+		XFillArc(dpy, mask, shape_gc, 0, 0, width, height, 0, 23040);
 
-    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
+	} else if(ln == 8) {
 
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
+		XPoint verticesBF[] = {
+			{0,height/4},
+			{width,height/4},
+			{width/2,height}
+		};
+		XFillPolygon(dpy, mask, shape_gc, verticesBF, (sizeof(verticesBF)/sizeof(XPoint)), Complex, CoordModeOrigin);
+		XFillArc(dpy, mask, shape_gc, 0, 0, width/2, height/2, 0, 11520);
+		XFillArc(dpy, mask, shape_gc, width/2, 0, width/2, height/2, 0, 11520);
+		XFillArc(dpy, mask, shape_gc, width/2, height/4, width/2, height*3/4, 14400, 11520);
+		XFillArc(dpy, mask, shape_gc, 0, height/4, width/2, height*3/4, 8640, 11520);
 
-void
-setemerald(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
+	} else if(ln == 9) {
 
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
+		XPoint verticesE[] = {
+			{width/8,0},
+			{width*7/8,0},
+			{width,height/8},
+			{width,height*7/8},
+			{width*7/8,height},
+			{width/8,height},
+			{0,height*7/8},
+			{0,height/8}
+		};
+		XFillPolygon(dpy, mask, shape_gc, verticesE, (sizeof(verticesE)/sizeof(XPoint)), Complex, CoordModeOrigin);
+
 	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
-
-	XPoint verticesE[] = {
-		{width/8,0},
-		{width*7/8,0},
-		{width,height/8},
-		{width,height*7/8},
-		{width*7/8,height},
-		{width/8,height},
-		{0,height*7/8},
-		{0,height/8}
-	};
-	XFillPolygon(dpy, mask, shape_gc, verticesE, (sizeof(verticesE)/sizeof(XPoint)), Complex, CoordModeOrigin);
-
-    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
-
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
-
-void
-setnonagon(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
-
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
-	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
-
-	XPoint verticesNG[] = {
-		{width/4,0},
-		{width*3/4,0},
-		{width,height/4},
-		{width,height/2},
-		{width*9/10,height*3/4},
-		{width/2,height},
-		{width/10,height*3/4},
-		{0,height/2},
-		{0,height/4}
-	};
-	XFillPolygon(dpy, mask, shape_gc, verticesNG, (sizeof(verticesNG)/sizeof(XPoint)), Complex, CoordModeOrigin);
-
-    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
-
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
-
-void
-setroundbrilliant(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
-
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
-	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
-
-	XPoint verticesPG[] = {
-		{width/4,0},
-		{width*3/4,0},
-		{width,height/4},
-		{width/2,height},
-		{0,height/4}
-	};
-	XFillPolygon(dpy, mask, shape_gc, verticesPG, (sizeof(verticesPG)/sizeof(XPoint)), Complex, CoordModeOrigin);
-
-    XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
-
-    XFreePixmap(dpy, mask);
-    XFreeGC(dpy, shape_gc);
-	XSync(dpy, False);
-}
-
-void
-setbutterfly(Client *c)
-{
-    Window w = c->win;
-    XWindowAttributes wa;
-    XGetWindowAttributes(dpy, w, &wa);
-
-    if(!XGetWindowAttributes(dpy, w, &wa)) {
-		return;
-	}
-
-    int width = (borderpx * 2) + wa.width;
-    int height = (borderpx * 2) + wa.height;
-
-	Pixmap mask = XCreatePixmap(dpy, w, width, height, 1);
-
-    if(!mask) {
-        return;
-	}
-    XGCValues xgcv;
-    GC shape_gc = XCreateGC(dpy, mask, 0, &xgcv);
-    if(!shape_gc) {
-        XFreePixmap(dpy, mask);
-        return;
-    }
-
-    XSetForeground(dpy, shape_gc, 0);
-    XFillRectangle(dpy, mask, shape_gc, 0, 0, width, height);
-    XSetForeground(dpy, shape_gc, 1);
-
-	XPoint verticesLO[] = {
-		{0,height/4},
-		{width,height/4},
-		{width/2,height}
-	};
-	XFillPolygon(dpy, mask, shape_gc, verticesLO, (sizeof(verticesLO)/sizeof(XPoint)), Complex, CoordModeOrigin);
-	XFillArc(dpy, mask, shape_gc, 0, 0, width/2, height/2, 0, 11520);
-	XFillArc(dpy, mask, shape_gc, width/2, 0, width/2, height/2, 0, 11520);
-	XFillArc(dpy, mask, shape_gc, width/2, height/4, width/2, height*3/4, 14400, 11520);
-	XFillArc(dpy, mask, shape_gc, 0, height/4, width/2, height*3/4, 8640, 11520);
 
     XShapeCombineMask(dpy, w, ShapeBounding, 0-wa.border_width, 0-wa.border_width, mask, ShapeSet);
 
