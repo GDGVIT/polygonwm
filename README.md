@@ -18,11 +18,13 @@
 - [X]  Window Tagging
 - [X]  Gaps
 - [X]  Honeycomb Layout
-- [X]  Nonagon Layout
-- [X]  Pentagon Layout
+- [X]  Dewdrop Layout
 - [X]  Mountain Layout
-- [X]  Ripple Layout
-- [ ]  Petal Layout
+- [X]  Nonagon Layout
+- [X]  Round Brilliant Layout
+- [X]  Planet Layout
+- [X]  Butterfly Layout
+- [X]  Emerald Layout
 
 <br>
 
