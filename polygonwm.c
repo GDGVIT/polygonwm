@@ -231,7 +231,7 @@ static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static void setspiral(Client *c);
 static void setcomb(Client *c);
-static void setmountain(Client *c, int ion);
+static void setmountain(Client *c);
 static void setemerald(Client *c);
 static void setnonagon(Client *c);
 static void setroundbrilliant(Client *c);
@@ -239,7 +239,7 @@ static void setbutterfly(Client *c);
 static void setcircle(Client *c);
 
 /* variables */
-static int inv = 0;
+static int ion = 0;
 static const char broken[] = "broken";
 static char stext[256];
 static int screen;
@@ -435,12 +435,12 @@ mountain(Monitor *mon) {
 			}
 		}
 		if(i%2 == 0) {
-			inv = 1;
+			ion = 1;
 		} else {
-			inv = 0;
+			ion = 0;
 		}
 		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
-		setmountain(c, inv);
+		setmountain(c);
 	}
 }
 
@@ -1714,7 +1714,7 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	if (((strcmp(selmon->lt[selmon->sellt]->symbol,"")) == 0)) {
 		setspiral(c);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"M")) == 0)) {
-		setmountain(c,inv);
+		setmountain(c);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"O")) == 0)) {
 		setcircle(c);
 	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"D")) == 0)) {
@@ -2600,7 +2600,7 @@ setspiral(Client *c)
 }
 
 void
-setmountain(Client *c, int ion)
+setmountain(Client *c)
 {
     Window w = c->win;
     XWindowAttributes wa;
