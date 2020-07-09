@@ -42,9 +42,20 @@ PolygonWM is the answer for the question "Can windows be non-rectangular?". It i
 	-  Unix-like OS
 	-  X11
 
-* How to Install:   
+* How to Install(with all the layouts):   
   First, clone this repo and extract the compressed file, and then cd into the extracted directory.
+  Then, modify the config.def.h file to your needs and uncomment the layout keybindings.
+  Then, run the following commands:
 ```bash
+$ make
+$ make install PREFIX=YOURDESIREDLOCATION
+```
+
+* How to Install(with only needed layouts):   
+```bash
+$ patch -R -p0 < patch.diff  
+$ # Open the patch.diff file, remove all the uwanted layouts and correspondings functions and keybindings and save it.
+$ patch -p0 < patch.diff
 $ make
 $ make install PREFIX=YOURDESIREDLOCATION
 ```
