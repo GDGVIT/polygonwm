@@ -1,0 +1,442 @@
+diff -ruN ./config.def.h ../polygonwm-master/config.def.h
+--- ./config.def.h	2020-07-09 13:25:48.891318638 +0530
++++ ../polygonwm-master/config.def.h	2020-07-09 13:04:10.934653370 +0530
+@@ -39,6 +39,14 @@
+ 	/* symbol     arrange function */
+ 	{ "",         spiral },    /* first entry is default */
+ 	{ "><>",      NULL },
++	{ "H",        honeycomb }, /* be sure to reflect chages in dwm.c in case of modifications */
++	{ "D",        dewdrop },
++	{ "M",        mountain },
++	{ "N",        nonagon },
++	{ "R",        roundbrilliant },
++	{ "O",        planet },
++	{ "B",        butterfly },
++	{ "E",        emerald },
+ 	{ NULL,       NULL },
+ 	/* no layout function means floating behavior */
+ };
+@@ -71,6 +79,14 @@
+ 	{ MODKEY|ShiftMask,             XK_c,                     killclient,     {0} },
+ 	{ MODKEY|ShiftMask,             XK_s,                     setlayout,      {.v = &layouts[0]} },
+ 	{ MODKEY|ShiftMask,             XK_f,                     setlayout,      {.v = &layouts[1]} },
++//	{ MODKEY|ShiftMask,             XK_h,                     setlayout,      {.v = &layouts[2]} },
++//	{ MODKEY|ShiftMask,             XK_d,                     setlayout,      {.v = &layouts[3]} },
++//	{ MODKEY|ShiftMask,             XK_m,                     setlayout,      {.v = &layouts[4]} },
++//	{ MODKEY|ShiftMask,             XK_n,                     setlayout,      {.v = &layouts[5]} },
++//	{ MODKEY|ShiftMask,             XK_r,                     setlayout,      {.v = &layouts[6]} },
++//	{ MODKEY|ShiftMask,             XK_p,                     setlayout,      {.v = &layouts[7]} },
++//	{ MODKEY|ShiftMask,             XK_b,                     setlayout,      {.v = &layouts[8]} },
++//	{ MODKEY|ShiftMask,             XK_e,                     setlayout,      {.v = &layouts[9]} },
+ 	{ MODKEY,                       XK_space,                 setlayout,      {0} },
+ 	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
+ 	{ MODKEY,                       XK_f,      				  togglefullscr,  {0} },
+diff -ruN ./polygonwm.c ../polygonwm-master/polygonwm.c
+--- ./polygonwm.c	2020-07-09 13:51:40.814650336 +0530
++++ ../polygonwm-master/polygonwm.c	2020-07-09 13:28:29.621318479 +0530
+@@ -188,6 +188,14 @@
+ static void setfullscreen(Client *c, int fullscreen);
+ static void setlayout(const Arg *arg);
+ static void spiral(Monitor *mon);
++static void honeycomb(Monitor *mon);
++static void dewdrop(Monitor *mon);
++static void mountain(Monitor *mon);
++static void nonagon(Monitor *mon);
++static void roundbrilliant(Monitor *mon);
++static void planet(Monitor *m);
++static void butterfly(Monitor *m);
++static void emerald(Monitor *mon);
+ static void setmfact(const Arg *arg);
+ static void setup(void);
+ static void seturgent(Client *c, int urg);
+@@ -321,6 +329,367 @@
+ }
+ 
+ void
++honeycomb(Monitor *mon) {
++	unsigned int i, n, nx, ny, nw, nh;
++	Client *c;
++
++	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
++	if(n == 0) {
++		return;
++	}
++	nx = mon->wx + gappx;
++	ny = mon->wy + gappx;
++	nw = mon->ww - (2 * gappx);
++	nh = mon->wh - (2 * gappx);
++	float df = (float)n/2;
++	int nor = (ceil(df)); /* no of rows of windows  */ 
++	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
++		if((!(i % 2) && nh / 2 > 2 * c->bw)
++			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
++			if(i == 1) {
++				if(n > 1) {
++					nw = (mon->ww - (2*gappx) - (gappx))/2;
++				}
++				if(n > 2) {
++					nh = (mon->wh - (4*gappx))/nor;
++				}
++			}
++			if(i == 2) {
++				nx += nw + gappx;
++			}
++
++			if(i > 2) {
++				if(i%2 == 1) {
++				if(i == n) {
++						nx = (mon->ww + gappx)/4;
++					}
++					else {
++						nx = (mon->wx + gappx);
++					}
++					ny += nh + (gappx);
++				} else {
++					nx = (mon->ww + gappx)/2;
++				}
++			}
++		}
++		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
++		setshape(c,2);  // Honeycomb layout
++	}
++}
++
++void dewdrop(Monitor *mon) {
++	unsigned int i, n, nx, ny, nw, nh;
++	Client *c;
++
++	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
++	if(n == 0) {
++		return;
++	}
++	nx = mon->wx;
++	ny = mon->wy;
++	nw = mon->ww;
++	nh = mon->wh;
++	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
++		if((!(i % 2) && nh / 2 > 2 * c->bw)
++			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
++			if(n > 1) {
++				if(i != 1) {
++					nx = nx+15;
++					ny = ny+15;
++					nw = nw-(30);
++					nh = nh-(30);
++				}
++			}
++		}
++		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
++		setshape(c,3);  // Dewdrop layout
++	}
++}
++
++void
++mountain(Monitor *mon) {
++	unsigned int i, n, nx, ny, nw, nh;
++	Client *c;
++
++	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
++	if(n == 0) {
++		return;
++	}
++	nx = mon->wx;
++	ny = mon->wy;
++	nw = (mon->ww/n);
++	nh = mon->wh;
++	
++	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
++		if((!(i % 2) && nh / 2 > 2 * c->bw)
++			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
++			if(i != 1) {
++				nx += nw;
++			}
++		}
++		if(i%2 == 0) {
++			ion = 1;
++		} else {
++			ion = 0;
++		}
++		resize(c, nx, ny, nw - 2 * c->bw, nh - 2 * c->bw, False);
++		setshape(c,4);  // Dewdrop layout
++
++	}
++}
++
++void nonagon(Monitor *mon) {
++	unsigned int i, n, nx, ny, nw, nh;
++	Client *c;
++
++	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
++	if(n == 0) {
++		return;
++	}
++	nx = mon->wx + gappx;
++	ny = mon->wy + gappx;
++	nw = mon->ww - (2 * gappx);
++	nh = mon->wh - (2 * gappx);
++	float df = (float)n/2;
++	int nor = (ceil(df)); /* no of rows of windows  */ 
++	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
++		if((!(i % 2) && nh / 2 > 2 * c->bw)
++			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
++			if(i == 1) {
++				if(n > 1) {
++					nw = (mon->ww - (2*gappx) - (gappx))/2;
++				}
++				if(n > 2) {
++					nh = (mon->wh - (2*gappx) - gappx)/nor;
++				}
++			}
++			if(i == 2) {
++				nx += nw + gappx;
++			}
++
++			if(i > 2) {
++				if(i%2 == 1) {
++					if(i == n) {
++						nx = (mon->ww + gappx)/4;
++					}
++					else {
++						nx = (mon->wx + gappx);
++					}
++					ny += nh + gappx;
++				} else {
++					nx = (mon->ww + gappx)/2;
++				}
++			}
++		}
++		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
++		setshape(c,5);  // Nonagon layout
++	}
++}
++
++void roundbrilliant(Monitor *mon) {
++	unsigned int i, n, nx, ny, nw, nh;
++	Client *c;
++
++	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
++	if(n == 0) {
++		return;
++	}
++	nx = mon->wx + gappx;
++	ny = mon->wy + gappx;
++	nw = mon->ww - (2 * gappx);
++	nh = mon->wh - (2 * gappx);
++	float df = (float)n/2;
++	int nor = (ceil(df)); /* no of rows of windows  */ 
++	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
++		if((!(i % 2) && nh / 2 > 2 * c->bw)
++			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
++			if(i == 1) {
++				if(n > 1) {
++					nw = (mon->ww - (2*gappx) - (gappx))/2;
++				}
++				if(n > 2) {
++					nh = (mon->wh - (2*gappx) - gappx)/nor;
++				}
++			}
++			if(i == 2) {
++				nx += nw + gappx;
++			}
++
++			if(i > 2) {
++				if(i%2 == 1) {
++					if(i == n) {
++						nx = (mon->ww + gappx)/4;
++					}
++					else {
++						nx = (mon->wx + gappx);
++					}
++					ny += nh + gappx;
++				} else {
++					nx = (mon->ww + gappx)/2;
++				}
++			}
++		}
++		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
++		setshape(c,6);  // Round Brilliant layout
++	}
++}
++
++void
++planet(Monitor *m)
++{
++	unsigned int i, n, h, mw, mx, my, oty, ety, tw;
++	Client *c;
++
++	/* count number of clients in the selected monitor */
++	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
++	if (n == 0)
++		return;
++
++	/* initialize areas */
++	mw = m->ww;
++	mx = 0;
++	my = 0;
++	tw = mw;
++
++	if (n > m->nmaster) {
++		/* go mfact box in the center if more than nmaster clients */
++		mw = m->nmaster ? m->ww * m->mfact : 0;
++		tw = m->ww - mw;
++
++		if (n - m->nmaster > 1) {
++			/* only one client */
++			mx = (m->ww - mw) / 2;
++			tw = (m->ww - mw) / 2;
++		}
++	}
++
++	oty = 0;
++	ety = 0;
++	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
++		if (i < m->nmaster) {
++			/* nmaster clients are stacked vertically, in the center
++			 * of the screen */
++			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
++			resize(c, m->wx + mx, m->wy + my, mw - (2*c->bw),
++			       h - (2*c->bw), 0);
++			my += HEIGHT(c);
++		} else {
++			/* stack clients are stacked vertically */
++			if ((i - m->nmaster) % 2 ) {
++				h = (m->wh - ety) / ( (1 + n - i) / 2);
++				resize(c, m->wx, m->wy + ety, tw - (2*c->bw),
++				h - (2*c->bw), 0);
++				ety += HEIGHT(c);
++			} else {
++				h = (m->wh - oty) / ((1 + n - i) / 2);
++				resize(c, m->wx + mx + mw, m->wy + oty,
++				tw - (2*c->bw), h - (2*c->bw), 0);
++				oty += HEIGHT(c);
++			}
++		}
++		setshape(c,7);  // Planet layout
++	}
++}
++
++void
++butterfly(Monitor *m)
++{
++	unsigned int i, n, w, mh, mw, mx, mxo, my, myo, tx;
++	Client *c;
++
++	/* count number of clients in the selected monitor */
++	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
++	if (n == 0)
++		return;
++
++	/* initialize nmaster area */
++	if (n > m->nmaster) {
++		/* go mfact box in the center if more than nmaster clients */
++		if (m->ww > m->wh) {
++			mw = m->nmaster ? m->ww * m->mfact : 0;
++			mh = m->nmaster ? m->wh * 0.9 : 0;
++		} else {
++			mh = m->nmaster ? m->wh * m->mfact : 0;
++			mw = m->nmaster ? m->ww * 0.9 : 0;
++		}
++		mx = mxo = (m->ww - mw) / 2;
++		my = myo = (m->wh - mh) / 2;
++	} else {
++		/* go fullscreen if all clients are in the master area */
++		mh = m->wh;
++		mw = m->ww;
++		mx = mxo = 0;
++		my = myo = 0;
++	}
++
++	for(i = tx = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
++		if (i < m->nmaster) {
++			/* nmaster clients are stacked horizontally, in the center
++			 * of the screen */
++			w = (mw + mxo - mx) / (MIN(n, m->nmaster) - i);
++			resize(c, m->wx + mx, m->wy + my, w - (2*c->bw),
++			       mh - (2*c->bw), 0);
++			mx += WIDTH(c);
++		} else {
++			/* stack clients are stacked horizontally */
++			w = (m->ww - tx) / (n - i);
++			resize(c, m->wx + tx, m->wy, w - (2*c->bw),
++			       m->wh - (2*c->bw), 0);
++			tx += WIDTH(c);
++		}
++		setshape(c,8);  // Butterfly layout
++	}
++}
++
++void emerald(Monitor *mon) {
++	unsigned int i, n, nx, ny, nw, nh;
++	Client *c;
++
++	for(n = 0, c = nexttiled(mon->clients); c; c = nexttiled(c->next), n++);
++	if(n == 0) {
++		return;
++	}
++	nx = mon->wx + gappx;
++	ny = mon->wy + gappx;
++	nw = mon->ww - (2 * gappx);
++	nh = mon->wh - (2 * gappx);
++	float df = (float)n/2;
++	int nor = (ceil(df)); /* no of rows of windows  */ 
++	for(i = 1, c = nexttiled(mon->clients); c; c = nexttiled(c->next), i++) {
++		if((!(i % 2) && nh / 2 > 2 * c->bw)
++			|| ((i % 2) && nw / 2 > 2 * c->bw)) {
++			if(i == 1) {
++				if(n > 1) {
++					nw = (mon->ww - (2*gappx) - (gappx))/2;
++				}
++				if(n > 2) {
++					nh = (mon->wh - (2*gappx) - gappx)/nor;
++				}
++			}
++			if(i == 2) {
++				nx += nw + gappx;
++			}
++
++			if(i > 2) {
++				if(i%2 == 1) {
++					if(i == n) {
++						nx = (mon->ww + gappx)/4;
++					}
++					else {
++						nx = (mon->wx + gappx);
++					}
++					ny += nh + gappx;
++				} else {
++					nx = (mon->ww + gappx)/2;
++				}
++			}
++		}
++		resize(c, nx, ny, (nw - 2 * c->bw), nh - 2 * c->bw, False);
++		setshape(c,9);  // Emerald layout
++	}
++}
++
++void
+ applyrules(Client *c)
+ {
+ 	const char *class, *instance;
+@@ -1335,6 +1704,22 @@
+ 
+ 	if (((strcmp(selmon->lt[selmon->sellt]->symbol,"")) == 0)) {
+ 		setshape(c,0);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"H")) == 0)) {
++		setshape(c,2);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"D")) == 0)) {
++		setshape(c,3);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"M")) == 0)) {
++		setshape(c,4);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"N")) == 0)) {
++		setshape(c,5);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"R")) == 0)) {
++		setshape(c,6);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"O")) == 0)) {
++		setshape(c,7);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"B")) == 0)) {
++		setshape(c,8);
++	} else if(((strcmp(selmon->lt[selmon->sellt]->symbol,"E")) == 0)) {
++		setshape(c,9);
+ 	} else {
+ 		return;
+ 	}
