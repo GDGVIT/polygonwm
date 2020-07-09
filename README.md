@@ -44,7 +44,7 @@ PolygonWM is the answer for the question "Can windows be non-rectangular?". It i
 
 * How to Install(with all the layouts):   
   First, clone this repo and extract the compressed file, and then cd into the extracted directory.
-  Then, modify the config.def.h file to your needs and uncomment the layout keybindings.
+  Then, modify the config.def.h file to make sure it fits your needs.
   Then, run the following commands:
 ```bash
 $ make
