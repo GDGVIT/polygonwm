@@ -14,7 +14,7 @@
 
 ## What is it, and why?  
 
-PolygonWM is the answer for the question "Can windows be non-rectangular?". It is forked from DWM version 6.2, and tries to adhere to the suckless philosophy. It isn't meant to be better than any other WMs and doesn't claim to be. It's meant to break conventions; to be different. PolygonWM contains the following additional DWM patches which might have not be in it's original form:  
+PolygonWM is the answer for the question "Can windows be non-rectangular?". It is forked from DWM version 6.2, and tries to adhere to the suckless philosophy. It isn't meant to be better than any other WMs and doesn't claim to be. It's meant to break conventions; to be different. PolygonWM contains the following additional DWM patches which might not be in it's original form:  
 - [fullscreen](https://dwm.suckless.org/patches/fullscreen/)
 - [cyclelayouts](https://dwm.suckless.org/patches/cyclelayouts/)
 - [gaps](https://dwm.suckless.org/patches/gaps/)
