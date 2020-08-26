@@ -1,0 +1,142 @@
+<p align="center">
+<a href="https://dscvit.com">
+    <img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" />
+</a>
+    <h2 align="center">  PolygonWM  </h2>
+    <h4 align="center">  An experimental window manager made purely for aesthetic pursposes.  <h4>
+</p>
+
+<hr />
+
+<!---
+[![DOCS](https://img.shields.io/badge/Documentation-see%20docs-green?style=flat-square&logo=appveyor)](INSERT_LINK_FOR_DOCS_HERE) 
+  [![UI ](https://img.shields.io/badge/User%20Interface-Link%20to%20UI-orange?style=flat-square&logo=appveyor)](INSERT_UI_LINK_HERE)
+-->
+
+<h2 id="whatisitandwhy">What is it, and why?</h2>
+
+<p>PolygonWM is the answer for the question "Can windows be non-rectangular?". It is forked from DWM version 6.2, and tries to adhere to the suckless philosophy. It isn't meant to be better than any other WMs and doesn't claim to be. It's meant to break conventions; to be different. PolygonWM contains the following additional DWM patches which might not be in it's original form:  </p>
+
+<ul>
+<li><a href="https://dwm.suckless.org/patches/fullscreen/">fullscreen</a></li>
+
+<li><a href="https://dwm.suckless.org/patches/cyclelayouts/">cyclelayouts</a></li>
+
+<li><a href="https://dwm.suckless.org/patches/gaps/">gaps</a></li>
+
+<li><a href="https://dwm.suckless.org/patches/centeredmaster/">centeredmaster</a></li>
+
+<li><a href="https://dwm.suckless.org/patches/fibonacci/">fibonacci</a></li>
+</ul>
+
+<h2 id="functionalities">Functionalities</h2>
+
+<ul>
+<li>[X]  All features of DWM(Multiple Workspaces, Bar, Window Tagging).</li>
+
+<li>[X]  Gaps</li>
+
+<li>[X]  Honeycomb Layout</li>
+
+<li>[X]  Dewdrop Layout</li>
+
+<li>[X]  Mountain Layout</li>
+
+<li>[X]  Nonagon Layout</li>
+
+<li>[X]  Round Brilliant Layout</li>
+
+<li>[X]  Planet Layout</li>
+
+<li>[X]  Butterfly Layout</li>
+
+<li>[X]  Emerald Layout</li>
+</ul>
+
+<p><br></p>
+
+<h2 id="instructionstorun">Instructions to run</h2>
+
+<ul>
+<li><p>Pre-requisites:</p>
+
+<ul>
+<li>Unix-like OS</li>
+
+<li>X11</li></ul></li>
+
+<li><p>How to Install(with all the layouts): <br />
+First, clone this repo and extract the compressed file, and then cd into the extracted directory.
+Then, modify the config.def.h file to make sure it fits your needs.
+Then, run the following commands:</p></li>
+</ul>
+
+<pre><code class="bash language-bash">$ make
+$ make install PREFIX=YOURDESIREDLOCATION
+</code></pre>
+
+<ul>
+<li>How to Install(with only needed layouts):   </li>
+</ul>
+
+<pre><code class="bash language-bash">$ patch -R -p0 &lt; patch.diff  
+$ # Open the patch.diff file, remove all the uwanted layouts and correspondings functions and keybindings and save it.
+$ patch -p0 &lt; patch.diff
+$ make
+$ make install PREFIX=YOURDESIREDLOCATION
+</code></pre>
+
+<ul>
+<li>Setting Polygonwm as the default WM:</li>
+</ul>
+
+<pre><code class="bash language-bash">$ echo "exec polygonwm" &gt;&gt; ~/.xinitrc
+</code></pre>
+
+<p>Restart X for the changes to take effect. <br />
+Note: Polygonwm automatically checks for other WMs in case another WM is already running. <br />
+Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a daily driver.  </p>
+
+<h2 id="usage">Usage</h2>
+
+<p>All settings/configurations and customizations are done throught the config..def.h file. After every change, the source has to be recompiled. The default keybindings can be viewed/modified from the config.def.h file, including those for the different layouts.</p>
+
+<h2 id="contributors">Contributors</h2>
+
+<table>
+<tr align="center">
+
+<td>
+
+Govind K
+
+<p align="center">
+</p>
+<p align="center">
+<a href = "https://github.com/Roidujeu"><img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36"/></a>
+</p>
+</td>
+
+
+<td>
+
+Angad Sharma
+
+<p align="center">
+</p>
+<p align="center">
+<a href = "https://github.com/L04DB4L4NC3R/"><img src = "http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height = "36"/></a>
+</p>
+</td>
+
+
+
+</tr>
+  </table>
+
+<p><br>
+<br></p>
+
+<p align="center">
+    Made with :heart: by <a href="https://dscvit.com">DSC VIT</a>
+</p>
