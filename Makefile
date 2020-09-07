@@ -26,6 +26,7 @@ polygonwm: ${OBJ}
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
+	rm config.h
 	rm -f polygonwm ${OBJ} polygonwm-${VERSION}.tar.gz
 
 dist: clean
