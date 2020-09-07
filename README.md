@@ -71,7 +71,7 @@ Note: Polygonwm is EXPERIMENTAL. It may break some apps. Do not use this WM as a
 
 ## Usage  
 
-All settings/configurations and customizations are done throught the config..def.h file. After every change, the source has to be recompiled. The default keybindings can be viewed/modified from the config.def.h file, including those for the different layouts.
+All settings/configurations and customizations are done throught the config.def.h file. After every change, the source has to be recompiled. The default keybindings can be viewed/modified from the config.def.h file, including those for the different layouts.
 
 ## Contributors
 
