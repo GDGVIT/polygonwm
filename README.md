@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://dscvit.com">
-	<img src="https://user-images.githubusercontent.com/30529572/72455010-fb38d400-37e7-11ea-9c1e-8cdeb5f5906e.png" />
+	<img src="https://user-images.githubusercontent.com/30529572/92081025-fabe6f00-edb1-11ea-9169-4a8a61a5dd45.png" />
 </a>
 	<h2 align="center">  PolygonWM  </h2>
 	<h4 align="center">  An experimental window manager made purely for aesthetic pursposes.  <h4>
